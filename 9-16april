@@ -1,0 +1,197 @@
+--9-15 april
+
+--1
+insert into moviestar(name, gender, birthdate)
+values('Nicole Kidman', 'F', '1967-06-20');
+
+-- трябва да проверим какво е станало, например:
+select * from moviestar;
+delete from MOVIESTAR where name='Nicole Kidman'
+select * from moviestar;
+
+
+--2
+select * from MOVIEEXEC;
+delete from MOVIEEXEC where NETWORTH < 1000000--0 rows affected
+select * from MOVIEEXEC;
+
+--<112 000 000 mahat se tezi < 112 000 000
+select * from MOVIEEXEC;
+delete from MOVIEEXEC where NETWORTH < 112000000--0 rows affected
+select * from MOVIEEXEC;
+
+
+--3
+begin transaction; -- изпълняваме този ред (F5)
+-- пишем си заявките и си ги изпълняваме по познатия начин (F5, F5...)
+delete from MOVIESTAR
+where address is null;
+-- накрая пишем:
+rollback transaction;
+
+--PRIMER
+select * from MOVIESTAR;--natiskam go predi i sled kaato delete-na imeto kakto i sled rollback transaction
+begin transaction; -- изпълняваме този ред (F5)
+-- пишем си заявките и си ги изпълняваме по познатия начин (F5, F5...)
+delete from MOVIESTAR
+where name='Jane Fonda'
+-- накрая пишем:
+rollback transaction;--F5 vuzstanovqva si go kakto e bilo
+
+--4
+select * from product,pc order by maker 
+begin transaction; 
+insert into product(maker,model,type)
+values('C', '1100', 'PC');
+insert into pc(code, model, speed, ram, hd, cd, price)
+VALUES(12, '1100', 2400, 2048, 500, '52x', 299);
+--rollback transaction;
+--select * from product,pc order by maker 
+
+--5 TRIE TOVA KOETO SME NAPRAVILI V 4TA
+select * from pc order by model
+select * from product order by model
+delete from pc where model='1100';
+delete from product where model='1100';
+
+--6
+select * from product order by model
+select * from product order by maker
+begin transaction; 
+insert into product (model, maker, type)
+select distinct model, 'Z', 'Laptop' from pc;--distinct model shte nareche model razlichen ot tezi na laptopite dosega
+rollback transaction;
+
+select * from laptop
+begin transaction; 
+insert into laptop(code, model, speed, ram, hd, price, screen)
+select code+100, model, speed, ram, hd, price+500, 15
+from pc;
+rollback transaction;
+
+--7
+--pokazva laptopite chiito proizvedtiel ne e i proizveditel na printer-tehnite kodove sa 2 i 3
+select * from laptop l 
+where l.model in (select model from product where type='Laptop'
+  and maker not in (select maker from product where type='Printer'))
+
+begin transaction; 
+delete from laptop
+where model in(select model from product where type='Laptop'
+ and maker not in (select maker from product where type='Printer'))
+ rollback transaction;
+
+ select * from laptop
+
+
+
+ --8
+delete from product where maker='Z'
+
+select * from product order by maker
+begin transaction; 
+update product
+set maker= 'A' where maker= 'B'
+rollback transaction;
+
+--9
+select * from pc
+begin transaction; 
+update pc
+set price=price/2,hd=hd+20
+rollback transaction;
+
+
+--10
+--laptopi chiito maker-i sa B
+select * from laptop where model in (select model from PRODUCT where maker='B')
+
+begin transaction; 
+update laptop
+set screen=screen+1 where model in (select model from PRODUCT where maker='B')
+rollback transaction;
+
+
+--11
+select *from ships s
+join classes c on c.CLASS=s.CLASS
+begin transaction;
+insert into classes
+values('Nelson', 'bb', 'Gt.Britain', 9, 16, 34000);
+
+insert into ships
+values('Nelson', 'Nelson', 1927);
+
+insert into ships
+values('Rodney', 'Nelson', 1927);
+
+rollback transaction;
+
+
+--12
+select * from ships s
+join OUTCOMES o on s.NAME=o.SHIP
+begin transaction;
+delete from ships
+where name in (select ship from OUTCOMES where result='sunk')
+rollback transaction;
+
+
+--13
+select * from CLASSES
+begin transaction;
+update classes
+set bore=bore*2.54, displacement=displacement/1.1;
+rollback transaction;
+
+
+--14
+select * from ships
+
+select class ,count(*)
+from ships
+group by CLASS
+
+select class ,count(*)
+from ships
+group by CLASS
+having count(*)>3
+
+--pokazva broevete na klasovete
+select class,count(*)
+from CLASSES
+group by CLASS
+
+--zadachata
+begin transaction;
+delete from classes
+where class NOT in
+(select class
+from ships
+group by class
+having count(*) >= 3);
+rollback transaction;
+
+delete from classes where class in
+(select classes.class 
+from classes
+left join ships on classes.class=ships.class
+group by classes.class
+having count(name)<3);
+
+
+--15
+select *from classes 
+
+begin transaction;
+update CLASSES
+set bore=(select bore from CLASSES where class='Bismarck'),
+DISPLACEMENT=(select DISPLACEMENT from CLASSES where class='Bismarck') where class ='Iowa'
+rollback transaction;
+
+
+
+
+
+
+
