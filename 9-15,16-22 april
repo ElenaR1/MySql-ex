@@ -192,6 +192,62 @@ rollback transaction;
 
 
 
+-------16-22
+CREATE DATABASE test
+GO
+USE test
+GO
+
+ create table product(
+ maker char(1),
+ model char(4), 
+ type varchar(7));
+
+ create table printer(
+ code int ,
+ model char(4),
+ color char(1) default 'n', 
+ price decimal(10,2));
+
+ --float(M,D) this keeping in mind here M=max. no. of digit allowed(range 1 to 65), D=no. of digits after 
+ --the decimal point. so cany you change it float(5,2). so float(2,2) does not satisfiy your need to enter no.10
+
+ create table classes(
+ class varchar(50),
+ type char(2)
+ );
+
+ --2
+  insert into Printer(code,model) 
+  values(10,'1234');
+  SELECT * FROM PRINTER
+
+   insert into product
+  values('A','1234','printer');
+    SELECT * FROM product
+	
+   insert into classes
+  values('Item','bb');
+    SELECT * FROM classes
+
+
+ --3
+ alter table classes add bore float
+ SELECT * FROM classes
+--4
+alter table printer drop column price
+
+--5
+DROP TABLE classes;
+DROP TABLE printer;
+DROP TABLE product;
+
+
+--6
+USE master
+GO
+DROP DATABASE test
+GO
 
 
 
