@@ -400,3 +400,108 @@ insert into students
 values(81200, 'MARC Ivanov', '9001012220', 'marcn@gmail.com', '1990-01-01', '2010-01-10');
 insert into StudentsIn values(81200, 5);
 
+
+
+
+
+-------------------------------------------------30april-6mai
+
+CREATE VIEW v_USA_classes
+AS
+SELECT *
+FROM classes
+WHERE country ='USA';
+
+select * from classes where country='USA'
+SELECT * FROM v_USA_classes
+
+
+--Следващият изглед изкарва средния брой оръдия на произвежданите класове по старни:
+CREATE VIEW v_Country_AvgGuns
+AS
+SELECT avg(numGuns) as average_Guns,country
+FROM classes
+GROUP BY country;
+
+SELECT *
+FROM v_Country_AvgGuns
+ORDER BY average_Guns DESC
+
+SELECT COUNTRY ,avg(numguns)
+FROM CLASSES
+GROUP BY COUNTRY ORDER BY avg(numguns) desc
+
+
+--Информация за характеристиките на всеки кораб можем да получим посредством
+--изгледа ships_full_info, дефиниран по следния начин:
+CREATE VIEW v_ships_full_info
+(name,type,numGuns,bore,displacement,country,launched)
+AS
+SELECT s.name, c.type,c.numGuns,c.bore,c.displacement,c.country,s.launched
+FROM classes c,ships s
+WHERE c.class=s.class
+
+select * from classes c
+join ships s on s.class=c.class
+
+select * from v_ships_full_info
+
+
+--1
+
+create view a (class,type,numguns,bore,displacement,launched)
+as
+select c.class,c.type,c.numguns,c.bore,c.displacement,s.launched
+from classes c, ships s
+where c.class=s.class and c.country='Gt.Britain'
+
+select * from classes c
+join ships s on s.class=c.class
+where c.country='Gt.Britain'
+
+select * from a
+
+--2
+select numguns,displacement
+from a
+where launched<1919
+
+--3
+select c.numguns,c.displacement
+ from classes c
+join ships s on s.class=c.class
+where c.country='Gt.Britain' and launched<1919
+
+
+--4
+
+
+
+--5
+create view sunk_ships
+as
+select *
+from outcomes o, ships s
+where o.ship=s.name and o.result='sunk'
+
+select *
+ from ships s
+join outcomes o on o.ship=s.name
+where o.result='sunk'
+
+select * from sunk_ships
+
+go
+
+-- 5
+create view SunkShips as
+select battle, ship
+from outcomes
+where result = 'sunk';
+
+go
+
+select * from SunkShips;
+
+
+
