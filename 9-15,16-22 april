@@ -251,3 +251,152 @@ GO
 
 
 
+------- 23-29 april
+
+create database deleteme
+go
+use deleteme
+go
+-- допълнение към материала: autoincrementing primary key
+create table test1
+(
+	id int identity primary key,
+	name nvarchar(50)
+);
+
+insert into test1(name) values('Test'); -- даваме стойност за всички колони, но без id
+insert into test1(name) values('Second Test');
+select * from test1;
+
+delete from test1 where id = 2;
+insert into test1(name) values('Third Test');--id-tata veche sa 1 i 3
+select * from test1;
+
+--1
+select * from movie--empire stikes back e 11 minuti
+alter table movie
+add constraint u2 unique(studioName, length);
+
+insert into movie(title, year, length, incolor, studioName, producerc#)
+values('Fail', 2012, 111, 'N', 'Fox', 123);
+-- горната заявка няма да тръгне, ако вече има филм на Фокс с дължина 111 минути
+
+alter table movie
+drop constraint u2;
+
+delete from movie
+where title='Fail'
+
+--3
+create table students
+(
+	fn int primary key check (fn between 0 and 99999),
+	name nvarchar(100) not null, -- допълнителен материал: в MSSQL се използва NVARCHAR за поддръжка на UNICODE символи
+	ssn char(10) unique not null,
+	email varchar(100) unique not null,
+	birthdate date not null,
+	adate date not null,
+	constraint at_least_18_yrs check(datediff(year, birthdate, adate) >= 18)
+);
+--TIMESTAMPDIFF(unit,datetime_expr1,datetime_expr2)-Returns datetime_expr2 – datetime_expr.The unit for the result (an integer) is given by the unit argument.
+--The unit argument can be:  MICROSECOND (microseconds), SECOND, MINUTE, HOUR, DAY, WEEK, MONTH, QUARTER, or YEAR.
+
+insert into students
+values(81888, 'Ivan Ivanov', '9001012222', 'ivan@gmail.com', '1990-01-01', '2009-01-10');
+select * from students;
+
+insert into students
+values(81888, 'Petar Petrov', '9033012222', 'petar@gmail.com', '1990-01-01', '2003-01-10');--ne stava t.k godinite < 18
+
+--NE STAVA TAKA, T.K Column CHECK constraint for column 'adate' references another column, table 'students2'.
+create table students2
+(
+	fn int primary key check (fn between 0 and 99999),
+	name nvarchar(100) not null, -- допълнителен материал: в MSSQL се използва NVARCHAR за поддръжка на UNICODE символи
+	ssn char(10) unique not null,
+	email varchar(100) unique not null,
+	birthdate date not null,
+	adate date not null check(datediff(year, birthdate, adate) >= 18),
+	--constraint at_least_18_yrs check(datediff(year, birthdate, adate) >= 18)
+);
+
+--% - The percent sign represents zero, one, or multiple characters- A WILDCARD
+-- _ - The underscore represents a single character
+select * from students;
+--b
+alter table students
+add constraint email_valid check(email like '%_@%_.%_');--polzvame _ za da ima e pone 3 znaka e.g a@b.c
+-- ima pone 3 bukvi sled dadenite znaci, a ne moje alpha@beta. i da nqma nishto sled .
+--WHERE CustomerName LIKE 'a_%_%'	Finds any values that starts with "a" and are at least 3 characters in length
+
+--ne stava
+update students set email = 'aaaa';
+--NE STAVA 
+update students set email = 'alpha@beta.';
+
+--WHERE City LIKE '[!bsp]%';=WHERE City NOT LIKE '[bsp]%';  City NOT starting with "b", "s", or "p":
+alter table students
+add constraint ssn_valid check(len(ssn)=10 and ssn NOT LIKE '%[^0-9.]%');--ZNACHI DA BUDE TOCHNO OT TOZI VID-MEJDU 0 I 9
+--NE STAVA
+update students
+set ssn='123';
+--NE STAVA
+update students
+set ssn='903301222A';
+
+
+
+--C
+--Реферираните атрибути от втората релация трябва да бъдат декларирани като UNIQUE
+--или PRIMARY KEY ограничения. В противен случай те не могат да участват във FK декларация.zatova identity e primary key
+create table courses(
+    id int identity primary key,
+	name varchar(50) not null
+);
+
+insert into courses(name) values('DB');
+insert into courses(name) values('OOP');
+insert into courses(name) values('Android');
+insert into courses(name) values('iOS');
+select * from courses;
+
+
+create table StudentsIn
+(
+	student_fn int references students(fn),
+	course_id int references courses(id) on delete cascade,
+	primary key(student_fn, course_id)
+);
+insert into StudentsIn values(81888, 2);
+insert into StudentsIn values(81888, 3);
+insert into StudentsIn values(81888, 4);
+select * from StudentsIn;
+
+-- id-тата на всички курсове, в които се е записал студент 81888:
+select course_id
+from StudentsIn
+where student_fn = 81888;
+-- факултетните номера на всички студенти, записали се в курс с id=3 (Android):
+select student_fn
+from StudentsIn
+where course_id = 3;
+
+select * from courses
+select * from StudentsIn;
+
+select * from courses
+join StudentsIn s on s.course_id=id
+
+select * from students
+join StudentsIn s on s.student_fn=fn
+
+delete from courses
+where name = 'iOS';
+select * from StudentsIn;
+-- виждаме, че вече няма студенти, записани в курс с id = 4 i iOS se trie ot courses
+
+insert into courses(name) values('DIS');
+insert into students
+values(81200, 'MARC Ivanov', '9001012220', 'marcn@gmail.com', '1990-01-01', '2010-01-10');
+insert into StudentsIn values(81200, 5);
+
