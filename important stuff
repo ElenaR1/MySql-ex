@@ -1,3 +1,21 @@
+--6-- За всеки персонален компютър се продава и 15-инчов лаптоп със същите параметри,
+-- но с $500 по-скъп. Кодът на такъв лаптоп е със 100 по-голям от кода на съответния
+-- компютър. Добавете тази информация в базата.
+select * from product order by model
+select * from product order by maker
+begin transaction; 
+insert into product (model, maker, type)
+select distinct model, 'Z', 'Laptop' from pc;--distinct model shte nareche model razlichen ot tezi na laptopite dosega
+rollback transaction;
+
+select * from laptop
+begin transaction; 
+insert into laptop(code, model, speed, ram, hd, price, screen)
+select code+100, model, speed, ram, hd, price+500, 15
+from pc;
+rollback transaction;
+
+------------------
 --3
 а) За всеки студент се съхранява следната информация:
 -- фак. номер - от 0 до 99999, първичен ключ;
