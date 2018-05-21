@@ -193,11 +193,17 @@ rollback transaction;
 
 
 -------16-22
+Създайте нова база от данни, например "test".
+В MS SQL Server това може да се направи така:
+
 CREATE DATABASE test
 GO
 USE test
 GO
-
+1. Дефинирайте следните релации:
+а) Product(maker, model, type), където моделът е низ от точно 4 символа, maker - един символ, а type - низ до 7 символа;
+б) Printer(code, model, color, price), където code е цяло число, color е 'y' или 'n' и по подразбиране е 'n', price - цена с точност до два знака след десетичната запетая;
+в) Classes(class, type), където class е до 50 символа, а type може да бъде 'bb' или 'bc'.
  create table product(
  maker char(1),
  model char(4), 
@@ -217,7 +223,7 @@ GO
  type char(2)
  );
 
- --2
+ --2 Добавете кортежи с примерни данни към новосъздадените релации. Добавете информация за принтер, за когото знаем само кода и модела.
   insert into Printer(code,model) 
   values(10,'1234');
   SELECT * FROM PRINTER
@@ -231,19 +237,20 @@ GO
     SELECT * FROM classes
 
 
- --3
+ --3 Добавете към Classes атрибут bore - число с плаваща запетая.
  alter table classes add bore float
  SELECT * FROM classes
---4
+--4Напишете заявка, която премахва атрибута price от Printer.
 alter table printer drop column price
 
---5
+--5 Изтрийте всички таблици, които сте създали в това упражнение.
+
 DROP TABLE classes;
 DROP TABLE printer;
 DROP TABLE product;
 
 
---6
+--6Накрая изтрийте и самата база. За целта трябва да укажем друга база да бъде текуща, понеже не можем да изтрием текущата база.
 USE master
 GO
 DROP DATABASE test
