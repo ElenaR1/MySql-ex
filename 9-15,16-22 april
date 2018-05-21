@@ -280,7 +280,12 @@ insert into test1(name) values('Third Test');--id-tata veche sa 1 i 3
 select * from test1;
 
 --1
+--a Да се направи така, че да не може два филма да имат еднаква дължина.
+alter table movie
+add constraint unique_length unique(length);
+
 select * from movie--empire stikes back e 11 minuti
+-- б) Да се направи така, че да не може едно студио да има два филма с еднаква дължина
 alter table movie
 add constraint u2 unique(studioName, length);
 
@@ -288,6 +293,7 @@ insert into movie(title, year, length, incolor, studioName, producerc#)
 values('Fail', 2012, 111, 'N', 'Fox', 123);
 -- горната заявка няма да тръгне, ако вече има филм на Фокс с дължина 111 минути
 
+-- Зад. 2. Изтрийте ограниченията от първа задача от Movie.
 alter table movie
 drop constraint u2;
 
@@ -295,6 +301,14 @@ delete from movie
 where title='Fail'
 
 --3
+а) За всеки студент се съхранява следната информация:
+-- фак. номер - от 0 до 99999, първичен ключ;
+-- име - до 100 символа;
+-- ЕГН - точно 10 символа, уникално;
+-- e-mail - до 100 символа, уникален;
+-- рождена дата;
+-- дата на приемане в университета - трябва да бъде поне 18 години след рождената;
+-- за всички атрибути задължително трябва да има зададена стойност (не може NULL)
 create table students
 (
 	fn int primary key check (fn between 0 and 99999),
@@ -330,7 +344,7 @@ create table students2
 --% - The percent sign represents zero, one, or multiple characters- A WILDCARD
 -- _ - The underscore represents a single character
 select * from students;
---b
+-- б) добавете валидация за e-mail адреса - да бъде във формат <нещо>@<нещо>.<нещо>
 alter table students
 add constraint email_valid check(email like '%_@%_.%_');--polzvame _ za da ima e pone 3 znaka e.g a@b.c
 -- ima pone 3 bukvi sled dadenite znaci, a ne moje alpha@beta. i da nqma nishto sled .
@@ -353,7 +367,8 @@ set ssn='903301222A';
 
 
 
---C
+
+-- в) създайте таблица за университетски курсове - уникален номер и име
 --Реферираните атрибути от втората релация трябва да бъдат декларирани като UNIQUE
 --или PRIMARY KEY ограничения. В противен случай те не могат да участват във FK декларация.zatova identity e primary key
 create table courses(
@@ -367,7 +382,9 @@ insert into courses(name) values('Android');
 insert into courses(name) values('iOS');
 select * from courses;
 
-
+-- всеки студент може да се запише в много курсове и във всеки курс
+-- може да има записани много студенти.
+-- При изтриване на даден курс автоматично да се отписват всички студенти от него.
 create table StudentsIn
 (
 	student_fn int references students(fn),
@@ -412,7 +429,9 @@ insert into StudentsIn values(81200, 5);
 
 
 -------------------------------------------------30april-6mai
-
+Примери:
+Следният изглед предоставя достъп до цялата информация за класовете кораби
+произвеждани от САЩ
 CREATE VIEW v_USA_classes
 AS
 SELECT *
@@ -454,7 +473,9 @@ join ships s on s.class=c.class
 select * from v_ships_full_info
 
 
---1
+--1. Дефинирайте изглед наречен BritishShips, който дава за всеки британски кораб
+неговият клас, тип, брой оръдия, калибър, водоизместимост и годината, в която е
+пуснат на вода
 
 create view a (class,type,numguns,bore,displacement,launched)
 as
@@ -468,12 +489,20 @@ where c.country='Gt.Britain'
 
 select * from a
 
---2
+-- i bez da pishem tzi v skobite pak sushtoto se poluchava
+create view b 
+as
+select c.class,c.type,c.numguns,c.bore,c.displacement,s.launched
+from classes c, ships s
+where c.class=s.class and c.country='Gt.Britain'
+
+--2Напишете заявка, която използва изгледа от предната задача, за да покаже броят
+--оръдия и водоизместимост на британските бойни кораби, пуснати на вода преди 1919.
 select numguns,displacement
 from a
 where launched<1919
 
---3
+--3Напищете съответната SQL заявка, реализираща задача 2, но без да използвате изглед.
 select c.numguns,c.displacement
  from classes c
 join ships s on s.class=c.class
@@ -510,5 +539,57 @@ go
 
 select * from SunkShips;
 
+--6. Въведете кораба California като потънал в битката при Guadalcanal чрез изгледа
+от задача 5. За целта задайте подходяща стойност по премълчаване на колоната
+result от таблицата Outcomes
+--частично:
+insert into SunkShips(battle, ship)
+values('Guadalcanal', 'California');
+-- горното ще мине, ако няма ограничение NOT NULL за колоната result в Outcomes
+select * from outcomes where result is null;
+-- в условието на задачата се иска да зададем DEFAULT стойност на колоната
+-- result, но ние няма да го правим - ще видим по-хубав начин с тригери :)
 
+
+--7. Създайте изглед за всички класове с поне 9 оръдия. Използвайте WITH CHECK
+--OPTION. Опитайте се да промените през изгледа броя оръдия на класа Iowa
+--последователно на 15 и 5.
+go
+
+create view ClassesWithAtLeast9Guns
+as
+select *
+from classes
+where numguns >= 9
+with check option;--WITH CHECK OPTION - определя дали само редове достъпни за изгледа могат да бъдат вмъквани и променяни..
+--ako imame with check option ne mogat da se promenqt broq orudiq na 5 t.k 5 <9
+go
+
+select * from ClassesWithAtLeast9Guns;
+
+update ClassesWithAtLeast9Guns
+set numguns = 5
+where class = 'Iowa';
+-- гръмна - така трябваше; с 15 ще мине
+
+
+--8. Променете изгледа от задача 7, така че броят оръдия да може да се променя без ограничения
+- drop, после create без with check option
+
+--9. Създайте изглед с имената на битките, в които са участвали поне 3 кораба с под 9
+оръдия и от тях поне един е бил увреден.
+
+create view v
+select o.battle
+from ships s, classes c ,outcomes o
+where o.ship=s.name and c.class=s.class
+
+
+
+
+select * 
+from ships s
+join classes c on c.class=s.class
+join outcomes o on o.ship=s.name
+where numguns <9 
 
