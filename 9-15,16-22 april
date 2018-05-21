@@ -1,6 +1,8 @@
 --9-15 april
 
---1
+--1-- Да се добави информация за актрисата Nicole
+-- Kidman. За нея знаем само, че е родена на
+-- 20-и юни 1967.
 insert into moviestar(name, gender, birthdate)
 values('Nicole Kidman', 'F', '1967-06-20');
 
@@ -10,7 +12,8 @@ delete from MOVIESTAR where name='Nicole Kidman'
 select * from moviestar;
 
 
---2
+--2-- Да се изтрият всички продуценти с печалба
+-- (networth) под 10 милиона.
 select * from MOVIEEXEC;
 delete from MOVIEEXEC where NETWORTH < 1000000--0 rows affected
 select * from MOVIEEXEC;
@@ -21,7 +24,9 @@ delete from MOVIEEXEC where NETWORTH < 112000000--0 rows affected
 select * from MOVIEEXEC;
 
 
---3
+--3-- Да се изтрие информацията за всички филмови
+-- звезди, за които адресът е неизвестен.
+
 begin transaction; -- изпълняваме този ред (F5)
 -- пишем си заявките и си ги изпълняваме по познатия начин (F5, F5...)
 delete from MOVIESTAR
@@ -39,6 +44,14 @@ where name='Jane Fonda'
 rollback transaction;--F5 vuzstanovqva si go kakto e bilo
 
 --4
+-- Използвайки две INSERT заявки, съхранете в базата от
+-- данни факта, че персонален компютър модел 1100 е
+-- направен от производител C, има процесор 2400 MHz,
+-- RAM 2048 MB, твърд диск 500 GB, 52x DVD устройство и струва $299. 
+-- Нека новият компютър има код 12. Забележка: моделът и CD са от тип
+-- низ.
+-- Упътване: самото вмъкване на данни е очевидно как ще стане,
+-- помислете в какъв ред е по-логично да са двете заявки.
 select * from product,pc order by maker 
 begin transaction; 
 insert into product(maker,model,type)
@@ -48,13 +61,15 @@ VALUES(12, '1100', 2400, 2048, 500, '52x', 299);
 --rollback transaction;
 --select * from product,pc order by maker 
 
---5 TRIE TOVA KOETO SME NAPRAVILI V 4TA
+--5 -- Да се изтрие всичката налична информация за компютри модел 1100.
 select * from pc order by model
 select * from product order by model
 delete from pc where model='1100';
 delete from product where model='1100';
 
---6
+--6-- За всеки персонален компютър се продава и 15-инчов лаптоп със същите параметри,
+-- но с $500 по-скъп. Кодът на такъв лаптоп е със 100 по-голям от кода на съответния
+-- компютър. Добавете тази информация в базата.
 select * from product order by model
 select * from product order by maker
 begin transaction; 
