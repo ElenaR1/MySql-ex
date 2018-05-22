@@ -625,3 +625,353 @@ join classes c on c.class=s.class
 join outcomes o on o.ship=s.name
 where numguns <9 
 
+-----------------------------------         14-20 mai TRIGERI
+------14-20 mai
+-- 1. Да се направи така, че при добавяне
+-- на нов клас автоматично да се добавя и
+-- нов кораб със същото име и с година на
+-- пускане на вода = null.
+use ships;
+go
+create trigger t1
+on classes
+after insert--sled kato dobavim (insert-nem) nov klas v primera 'Test'
+as
+	insert into ships(name, class)--dobavq se korab s ime=imeto na klasa t.e 'Test'
+	select class, class
+	from inserted;
+
+-- тестване:
+insert into classes
+values('Test', 'bb', 'Bulgaria', 14, 20, 80000);
+select * from ships where name = 'Test';
+drop trigger t1;
+
+select * from ships
+select * from classes
+
+
+-- 2. При изтриване на кораб автоматично да се изтрива и неговият клас, ако
+-- няма повече кораби от този клас.
+-- Забележка: ако преди това е имало класове без кораби - да не се пипат!
+-- Забележка: клас без кораби може да се получи и при update
+go
+
+create trigger t2
+on ships
+after delete
+as
+	delete from classes
+	where class in (select class
+					from deleted
+					where class not in (select class
+										from ships));
+-- Забележка: ако не използвахме deleted,
+-- а направо ships, щяхме да изтрием и 
+-- класове, които са били празни и преди
+-- съответния delete
+
+-- тестване:
+-- в предишната задача вече сме добавили нов клас и нов кораб, ще използваме тях
+delete from ships
+where name = 'Test';
+select * 
+from classes
+where class = 'Test';
+drop trigger t2;
+go
+
+-- леко - искаме при изтриване на клас да се изтриват и 
+-- всички кораби - ами може с on delete cascade
+
+
+-- 3. Да се направи така, че ако при 
+-- добавяне или обновяване на кораб
+-- годината му на пускане е по-голяма от 
+-- текущата година, то годината му да бъде
+-- променена на null. (това е задача 3-А от 12.exerciseTriggers.pdf)
+-- в MSSQL няма BEFORE тригери, затова ще търсим друг начин
+create trigger t3
+on ships
+after insert, update
+as
+	update ships
+	set launched = null
+	where name in (select name
+					from inserted
+					where launched > year(getdate()));
+-- тестване:
+insert into ships values('Test','Iowa',2250);
+select * from ships where name='Test';
+delete from ships where name='Test';
+drop trigger t3;
+go
+-- горното решение ще гръмне, ако има check(launched <= year(getdate()) в ships!
+
+-- ако трябва в тялото на тригер да разграничим дали е бил извикан при insert или при update,
+-- можем да проверим if exists (select * from deleted)
+
+-- ако беше само за insert, можеше да направим instead of insert и всичко щеше да е наред
+create trigger t
+on ships
+instead of insert
+as
+insert into ships(name, class, launched)
+select name, class, case 
+			when launched > year(getdate()) then null 
+			else launched 
+			end
+from inserted;
+-- вариант без case: 
+-- insert into ships 
+-- select * from inserted where launched <= year(getdate())
+-- union all
+-- select name, class, null from inserted where launched > year(getdate());
+drop trigger t;
+go
+
+-- 4. При промяна на черно-бял филм на цветен съответният продуцент да получава $100000.
+-- Ако в една UPDATE заявка са били променени няколко филма на един продуцент, той да получи 
+-- само веднъж 100000.
+
+create trigger t4
+on movie
+after update
+as
+	update movieexec
+	set networth = networth + 100000
+	where cert# in (select i.producerc#
+					from deleted d--deleted sa starite stoinosti predi update-vaneto
+					join inserted i on d.title = i.title and d.year = i.year--i-novite stoinosti
+					where d.inColor = 'n' and i.inColor = 'y');
+
+--primer 
+update movie
+set incolor='Y'
+where length=116
+select * 
+from movieexec me 
+join movie m on m.PRODUCERC#=me.CERT#
+
+
+update movie m
+join movieexec me  on m.PRODUCERC#=me.CERT#
+set incolor='N',networth=200000000
+where length=116
+
+drop trigger t4;
+
+
+-- Следващият пример е за валидация на данни. Всички задачи от такъв тип може да се решат аналогично.
+
+-- 5. Да не се допуска добавянето на ред
+-- в OUTCOMES, който да указва, че даден
+-- кораб е участвал в битка, преди да бъде
+-- пуснат на вода.
+
+-- Aко се добавят няколко реда и поне един от тях нарушава условието за коректност, 
+-- цялата операция ще бъде отменена.
+use ships;
+go
+
+create trigger t5
+on outcomes
+after insert
+as
+	if exists (select *
+				from inserted--dobavili sme nov outcome
+				join ships on ship = ships.name
+				join battles on battle = battles.name
+				where launched > year(battles.date))
+	begin
+		raiserror('Error: ship is launched after the battle', 16, 10); -- има само едно "е"
+		rollback;
+	end;
+
+-- проверка:
+insert into outcomes(ship, battle, result) 
+values('Iowa', 'North Atlantic', 'sunk');
+
+select * from outcomes
+where ship='Iowa';
+
+select b.name,s.name,s.launched 
+from battles b
+join outcomes o on b.NAME=o.BATTLE
+JOIN SHIPS S ON S.NAME=o.SHIP
+select * from ships
+
+drop trigger t5;
+go
+
+
+-- С помощта на INSTEAD OF тригерите може да се изпълняват INSERT, UPDATE и DELETE заявки върху всеки изглед.
+-- 6. Да се създаде изглед за всички
+-- потънали кораби (име на кораб и битка), т.е. за всеки 
+-- потънал кораб да казва в коя битка е потънал,
+-- който да позволява insert, update, delete.
+
+create view SunkShips
+as
+select ship, battle
+from outcomes
+where result = 'sunk';
+go
+
+-- UPDATE и DELETE могат да се изпълнят безпроблемно,
+-- но при INSERT новият ред би имал result = null, което не ни върши работа.
+
+create trigger t6
+on SunkShips
+instead of insert
+as
+	insert into outcomes(ship, battle, result)
+	select ship, battle, 'sunk'
+	from inserted;
+
+drop trigger t6;
+
+insert into SunkShips(battle,ship) values ("eee","greg")
+select * from SunkShips
+select * from outcomes where result='sunk'
+
+
+-- 7. -- Симулиране на ON DELETE SET NULLS
+-- MS SQL не поддържа ON DELETE SET NULLS. Да се реализира с 
+-- тригери за външния ключ movie.producerc#
+go
+use movies;
+go
+
+create trigger t
+on movieexec
+instead of delete --не може after trigger заради FK; 
+-- в други СУБД има before тригери
+as
+begin
+	update movie
+	set producerc# = null
+	where producerc# in (select cert# from deleted);
+
+	-- следващата операция е тази, която по принцип щеше да се изпълни и без тригер
+	delete from movieexec
+	where cert# in (select cert# from deleted);
+end;
+
+-- ако имаме INSTEAD OF INSERT и искаме да изпълним INSERT заявката, която е била предвидена:
+-- INSERT INTO <table>
+-- SELECT * FROM INSERTED;
+
+go
+ 
+--------------------          12.exerciseTriggers.pdf
+-- Зад. 1. Да се напише тригер за таблицата MovieExec, който не позволява 
+-- средната стойност на Networth да е по-малка от 500 000 (ако при промени в 
+-- таблицата тази стойност стане по-малка от 500 000, промените да бъдат 
+-- отхвърлени).
+
+create trigger t
+on movieexec
+after insert, update, delete
+as
+	if (select AVG(networth)
+		from movieexec) < 500000
+	begin
+		raiserror('Error: Average networth cannot be < 500000', 16, 10);
+		rollback;
+	end;
+
+
+--2А) При промяна на цената на някой компютър се уверете, че няма компютър с по-ниска цена и
+същата честота на процесора;
+create trigger t7
+on pc
+after update
+as
+--if((price in (select price from updated)) > (select min(price) from deleted ))
+if exists (select price from pc where price < (select price from inserted))
+begin
+		raiserror('Not min', 16, 10);
+		rollback;
+	end;
+
+	drop trigger t7
+
+select * from pc order by price
+--PRIMER -nqma da stane t.k imame pc-ta s price 370 > 350
+update pc
+set price=370
+where code =8
+
+select min(price) from pc
+
+
+-- 2 Б) Никой производител на компютри не може да произвежда и принтери;
+create trigger t8
+on product
+after insert,update 
+as
+if exists(select * 
+             from product p1
+			    join product p2 on p1.maker=p2.maker
+				  where p1.type = 'PC' and p2.type = 'Printer')
+begin 
+raiseerror("exists",16,10);
+rollback;
+end;
+
+select * 
+from product p1
+ join product p2 on p1.maker=p2.maker
+
+
+ --2В) Всеки производител на компютър трябва да произвежда и лаптоп, който да има същата или
+по-висока честота на процесора;
+
+
+-- 2 Г) При променяне на данните в таблицата Laptop се уверете, че средната 
+-- цена на лаптопите за всеки производител е поне 2000;
+create trigger t
+on laptop
+after update
+as
+if exists  (select maker
+			from laptop
+			join Product on laptop.model = Product.model
+			group by maker
+			having AVG(price) < 2000)
+begin
+	raiserror('...', 16, 10);
+	rollback;
+end;
+select maker, avg(price)
+from product p
+join laptop l on l.model=p.model
+group by maker
+
+
+select maker, avg(price)
+from product p
+join laptop l on l.model=p.model
+group by maker
+having avg(price) >1000--B
+
+-- 2 Д) Д) При обновяване на RAM или HD полетата на даден компютър се уверете, че твърдия диск е
+--поне 100 пъти по-голям от паметта;- по-добре с CHECK
+create trigger t8
+on pc
+after update
+as
+if exists (select * from inserted i
+          where i.hd<i.ram)
+begin
+	raiserror('.lala', 16, 10);
+	rollback;
+end;
+	drop trigger t8
+select * from pc 
+--primer
+update pc
+set ram=ram+1
+where model=1232
+
