@@ -84,7 +84,13 @@ select code+100, model, speed, ram, hd, price+500, 15
 from pc;
 rollback transaction;
 
---7
+--7-- Да се изтрият всички лаптопи, направени от производител, който не
+-- произвежда принтери.
+-- Упътване: Мислете си, че решавате задача от познат тип - "Да се
+-- изведат всички лаптопи, ...". Накрая ще е нужна съвсем малка
+-- промяна. Ако започнете директно да триете, много е вероятно при
+-- някой грешен опит да изтриете всички лаптопи и ще трябва често да
+-- възстановявате таблицата или да работите на сляпо.
 --pokazva laptopite chiito proizvedtiel ne e i proizveditel na printer-tehnite kodove sa 2 i 3
 select * from laptop l 
 where l.model in (select model from product where type='Laptop'
@@ -100,7 +106,9 @@ where model in(select model from product where type='Laptop'
 
 
 
- --8
+ --8-- Производител А купува производител B. На всички продукти на В
+-- променете производителя да бъде А.
+
 delete from product where maker='Z'
 
 select * from product order by maker
@@ -109,7 +117,8 @@ update product
 set maker= 'A' where maker= 'B'
 rollback transaction;
 
---9
+--9-- Да се намали два пъти цената на всеки компютър и да се добавят по
+-- 20 GB към всеки твърд диск. Упътване: няма нужда от две отделни заявки.
 select * from pc
 begin transaction; 
 update pc
@@ -117,7 +126,8 @@ set price=price/2,hd=hd+20
 rollback transaction;
 
 
---10
+--10-- За всеки лаптоп от производител B добавете по един инч към диагонала
+-- на екрана.
 --laptopi chiito maker-i sa B
 select * from laptop where model in (select model from PRODUCT where maker='B')
 
@@ -127,7 +137,10 @@ set screen=screen+1 where model in (select model from PRODUCT where maker='B')
 rollback transaction;
 
 
---11
+--11-- Два британски бойни кораба от класа Nelson - Nelson и Rodney - са
+-- били пуснати на вода едновременно през 1927 г. Имали са девет
+-- 16-инчови оръдия (bore) и водоизместимост от 34 000 тона (displacement).
+-- Добавете тези факти към базата от данни.
 select *from ships s
 join classes c on c.CLASS=s.CLASS
 begin transaction;
@@ -143,7 +156,7 @@ values('Rodney', 'Nelson', 1927);
 rollback transaction;
 
 
---12
+--12-- Изтрийте от Ships всички кораби, които са потънали в битка.
 select * from ships s
 join OUTCOMES o on s.NAME=o.SHIP
 begin transaction;
@@ -152,7 +165,9 @@ where name in (select ship from OUTCOMES where result='sunk')
 rollback transaction;
 
 
---13
+--13-- Променете данните в релацията Classes така, че калибърът (bore) да се измерва
+-- в сантиметри (в момента е в инчове, 1 инч ~ 2.5 см) и водоизместимостта
+-- да се измерва в метрични тонове (1 м.т. = 1.1 т.)
 select * from CLASSES
 begin transaction;
 update classes
@@ -160,7 +175,8 @@ set bore=bore*2.54, displacement=displacement/1.1;
 rollback transaction;
 
 
---14
+--14-- Изтрийте всички класове, от които има по-малко от три кораба.
+-- заб.: може да има класове без кораби
 select * from ships
 
 select class ,count(*)
@@ -195,7 +211,8 @@ group by classes.class
 having count(name)<3);
 
 
---15
+--15-- Променете калибъра на оръдията и водоизместимостта на класа 
+--Iowa, така че да са същите като тези на класа Bismarck
 select *from classes 
 
 begin transaction;
