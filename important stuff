@@ -232,3 +232,35 @@ from product p
 join laptop l on l.model=p.model
 group by maker
 having avg(price) >1000--B
+
+
+--------------------------- tv show probno kontrolno
+Basically an index on a table works like an index in a book (that's where the name came from):
+
+Let's say you have a book about databases and you want to find some information about, say, storage. Without an index 
+(assuming no other aid, such as a table of contents) you'd have to go through the pages one by one, until you found the topic 
+(that's a full table scan). On the other hand, an index has a list of keywords, so you'd consult the index and see that storage 
+is mentioned on pages 113-120,231 and 354. Then you could flip to those pages directly, without searching (that's a search 
+with an index, somewhat faster).
+
+What are the benefits of a clustered index?
+
+The data in a clustered index is stored in order. That means:
+
+Finding the data you need in your clustered index is a matter of knowing where to look in our alphabetical list of data. Computers
+are really good at doing this.
+If your data needs to be outputted in the same order that it’s stored in — presto! — SQL doesn’t need to do any additional sorting.
+
+Nonclustered Indexes
+If a clustered index is like a phone book, a nonclustered index is like the index in the back of a chemistry text book. 
+The chemistry text book has some natural order to it (“Chapter 1: Matter, Chapter 2: Elements, Chapter 3: Compounds, etc…”). 
+However, this order doesn’t help us if we want to look up the location of something specific, like “noble gases”.
+
+So what do we do? We go to the index in the back of the textbook which lists all topics in alphabetical order, making it easy
+to find the listing for “noble gases” and the page number they are discussed on. Once we know the page number for noble gases 
+from our index, we can flip to the correct page and get the data we need.
+______________________________________________________________________________________________
+-- 3. Да се направи така, че да не се допуска въвеждане на сериали на език различен от английски, в случай,
+-- че телевизията, която го поръчва е NBC или FOX.
+ALTER TABLE Show
+ADD CONSTRAINT language_valid CHECK ((Television like 'NBC' or Television like 'FOX') AND (Language like 'English'))
