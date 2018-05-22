@@ -70,6 +70,14 @@ set bore=(select bore from CLASSES where class='Bismarck'),
 DISPLACEMENT=(select DISPLACEMENT from CLASSES where class='Bismarck') where class ='Iowa'
 rollback transaction;
 ------------------
+16-22 april
+ --3 Добавете към Classes атрибут bore - число с плаваща запетая.
+ alter table classes add bore float
+ SELECT * FROM classes
+--4Напишете заявка, която премахва атрибута price от Printer.
+alter table printer drop column price
+
+--------------------------------
 --3
 а) За всеки студент се съхранява следната информация:
 -- фак. номер - от 0 до 99999, първичен ключ;
