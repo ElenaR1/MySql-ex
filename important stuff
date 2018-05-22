@@ -204,3 +204,31 @@ where class = 'Iowa';
 -- гръмна - така трябваше; с 15 ще мине
 
 
+--------------------------- 30 mai
+
+-- 2 Г) При променяне на данните в таблицата Laptop се уверете, че средната 
+-- цена на лаптопите за всеки производител е поне 2000;
+create trigger t
+on laptop
+after update
+as
+if exists  (select maker
+			from laptop
+			join Product on laptop.model = Product.model
+			group by maker
+			having AVG(price) < 2000)
+begin
+	raiserror('...', 16, 10);
+	rollback;
+end;
+select maker, avg(price)
+from product p
+join laptop l on l.model=p.model
+group by maker
+
+
+select maker, avg(price)
+from product p
+join laptop l on l.model=p.model
+group by maker
+having avg(price) >1000--B
