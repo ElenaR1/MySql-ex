@@ -181,3 +181,26 @@ select *
 from outcomes o, ships s
 where o.ship=s.name and o.result='sunk'
 where length = (select max(length) from movie)
+
+--7. Създайте изглед за всички класове с поне 9 оръдия. Използвайте WITH CHECK
+--OPTION. Опитайте се да промените през изгледа броя оръдия на класа Iowa
+--последователно на 15 и 5.
+go
+
+create view ClassesWithAtLeast9Guns
+as
+select *
+from classes
+where numguns >= 9
+with check option;--WITH CHECK OPTION - определя дали само редове достъпни за изгледа могат да бъдат вмъквани и променяни..
+--ako imame with check option ne mogat da se promenqt broq orudiq na 5 t.k 5 <9
+go
+
+select * from ClassesWithAtLeast9Guns;
+
+update ClassesWithAtLeast9Guns
+set numguns = 5
+where class = 'Iowa';
+-- гръмна - така трябваше; с 15 ще мине
+
+
