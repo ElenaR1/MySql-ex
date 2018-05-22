@@ -15,6 +15,60 @@ select code+100, model, speed, ram, hd, price+500, 15
 from pc;
 rollback transaction;
 
+--7-- Да се изтрият всички лаптопи, направени от производител, който не
+-- произвежда принтери.
+-- Упътване: Мислете си, че решавате задача от познат тип - "Да се
+-- изведат всички лаптопи, ...". Накрая ще е нужна съвсем малка
+-- промяна. Ако започнете директно да триете, много е вероятно при
+-- някой грешен опит да изтриете всички лаптопи и ще трябва често да
+-- възстановявате таблицата или да работите на сляпо.
+--pokazva laptopite chiito proizvedtiel ne e i proizveditel na printer-tehnite kodove sa 2 i 3
+select * from laptop l 
+where l.model in (select model from product where type='Laptop'
+  and maker not in (select maker from product where type='Printer'))
+
+begin transaction; 
+delete from laptop
+where model in(select model from product where type='Laptop'
+ and maker not in (select maker from product where type='Printer'))
+ rollback transaction;
+
+
+--14-- Изтрийте всички класове, от които има по-малко от три кораба.
+-- заб.: може да има класове без кораби
+select * from ships
+
+--pokazva broevete na korbaite ot daden klas
+select class ,count(*)
+from ships
+group by CLASS
+
+select class ,count(*)
+from ships
+group by CLASS
+having count(*)>3
+
+
+--zadachata
+begin transaction;
+delete from classes
+where class NOT in
+(select class
+from ships
+group by class
+having count(*) >= 3);
+rollback transaction;
+
+
+--15 Променете калибъра на оръдията и водоизместимостта на класа 
+--Iowa, така че да са същите като тези на класа Bismarck
+select *from classes 
+
+begin transaction;
+update CLASSES
+set bore=(select bore from CLASSES where class='Bismarck'),
+DISPLACEMENT=(select DISPLACEMENT from CLASSES where class='Bismarck') where class ='Iowa'
+rollback transaction;
 ------------------
 --3
 а) За всеки студент се съхранява следната информация:
