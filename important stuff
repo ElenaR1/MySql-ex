@@ -76,6 +76,18 @@ rollback transaction;
  SELECT * FROM classes
 --4Напишете заявка, която премахва атрибута price от Printer.
 alter table printer drop column price
+--5 Изтрийте всички таблици, които сте създали в това упражнение.
+
+DROP TABLE classes;
+DROP TABLE printer;
+DROP TABLE product;
+
+
+--6Накрая изтрийте и самата база. За целта трябва да укажем друга база да бъде текуща, понеже не можем да изтрием текущата база.
+USE master
+GO
+DROP DATABASE test
+GO
 
 --------------------------------
 --3
