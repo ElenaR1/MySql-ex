@@ -204,8 +204,51 @@ where class = 'Iowa';
 -- гръмна - така трябваше; с 15 ще мине
 
 
---------------------------- 30 mai
+--------------------------- 30 mai TRIGERI 
+-- 1. Да се направи така, че при добавяне
+-- на нов клас автоматично да се добавя и
+-- нов кораб със същото име и с година на
+-- пускане на вода = null.
+use ships;
+go
+create trigger t1
+on classes
+after insert--sled kato dobavim (insert-nem) nov klas v primera 'Test'
+as
+	insert into ships(name, class)--dobavq se korab s ime=imeto na klasa t.e 'Test'
+	select class, class
+	from inserted;
 
+-- 3. Да се направи така, че ако при 
+-- добавяне или обновяване на кораб
+-- годината му на пускане е по-голяма от 
+-- текущата година, то годината му да бъде
+-- променена на null. (това е задача 3-А от 12.exerciseTriggers.pdf)
+-- в MSSQL няма BEFORE тригери, затова ще търсим друг начин
+create trigger t3
+on ships
+after insert, update
+as
+	update ships
+	set launched = null
+	where name in (select name
+					from inserted
+					where launched > year(getdate()));
+
+-- 2 Б) Никой производител на компютри не може да произвежда и принтери;
+create trigger t8
+on product
+after insert,update 
+as
+if exists(select * 
+             from product p1
+			    join product p2 on p1.maker=p2.maker
+				  where p1.type = 'PC' and p2.type = 'Printer')
+begin 
+raiseerror("exists",16,10);
+rollback;
+end;					
+					
 -- 2 Г) При променяне на данните в таблицата Laptop се уверете, че средната 
 -- цена на лаптопите за всеки производител е поне 2000;
 create trigger t
