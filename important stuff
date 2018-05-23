@@ -170,9 +170,10 @@ where length = max(length);
 -- вярно:
 select *
 from movie
- 
+
 select *
 from movie
+where length = (select max(length) from movie);
 
 --5
 create view sunk_ships
