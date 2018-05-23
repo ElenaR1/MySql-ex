@@ -269,3 +269,1000 @@ ALTER TABLE Show ADD EpisodeCount int default 0
 -- Отговор: d
  
 ---------------------------------------------------------------------------------------------------------
+		   
+		   
+		   
+		   USE master
+ 
+DROP DATABASE tvshow
+GO
+ 
+CREATE DATABASE tvshow
+GO
+ 
+USE tvshow
+ 
+CREATE TABLE Show (
+   ShowID int IDENTITY PRIMARY KEY,
+   ShowTitle varchar(64) UNIQUE NOT NULL,
+   Description text NULL,
+   Type varchar(32) NULL,
+   Language varchar(32) NULL,
+   Studio varchar(32) NULL,
+   Television varchar(32) NULL,
+   Country varchar(32) NULL,
+   MinimumAge int NULL,
+   PopularityRating decimal(18,1) NULL,
+   PositivityRating decimal(18,1) NULL,
+   ViolenceRating decimal(18,1) NULL,
+   SexRating decimal(18,1) NULL,
+   LanguageRating decimal(18,1) NULL,
+   ConsumerismRating decimal(18,1) NULL,
+   DrinkSmokeRating decimal(18,1) NULL
+);
+ 
+CREATE TABLE Episode (
+  ShowID int REFERENCES Show(ShowID) NOT NULL,
+  Season int NOT NULL,
+  Episode int NOT NULL,
+  Title varchar(64) NOT NULL,
+  DateAired date NULL,
+  Runtime int NULL,
+  Viewers decimal(18,1) NULL,
+  Rating decimal(18,1) NULL,
+  PRIMARY KEY(ShowID, Season, Episode)
+);
+ 
+CREATE TABLE Actor (
+    ActorID int IDENTITY PRIMARY KEY,
+    FirstName varchar(64) NOT NULL,
+    LastName varchar(64) NOT NULL,
+    BirthDate date NULL
+)
+ 
+CREATE TABLE ShowStar (
+    ShowID int NOT NULL REFERENCES Show(ShowID),
+    ActorID int NOT NULL REFERENCES Actor(ActorID),
+    Plays varchar(64)
+)
+ 
+INSERT INTO Show VALUES (
+    'Friends',
+    'Hilarious sitcom for adults and older teens. Follows the personal and professional lives of six 20 to 30-something-year-old friends living in Manhattan.',
+    'Comedy',
+    'English',
+    'Warner Bros. Television',
+    'NBC',
+    'USA',
+    13,
+    8.9,
+    3,
+    1,
+    3,
+    2,
+    NULL,
+    3)
+ 
+INSERT INTO Show VALUES (
+    'Malcolm in the Middle',
+    'Quirky, off-the-wall family humor. A gifted young teen tries to survive life with his dimwitted, dysfunctional family.',
+    'Comedy',
+    'English',
+    '20th Century Fox Television',
+    'FOX',
+    'USA',
+    13,
+    8.0,
+    1,
+    2,
+    2,
+    2,
+    NULL,
+    NULL)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    1,
+ 
+    'The Pilot',
+    'September 22, 1994',
+    22,
+    21.5, 8.5
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    2,
+ 
+    'The One with the Sonogram at the End',
+    'September 29, 1994',
+    22,
+    22.2, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    3,
+ 
+    'The One with the Thumb',
+    'October 6, 1994',
+    22,
+    19.5, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    4,
+ 
+    'The One with George Stephanopoulos',
+    'October 13, 1994',
+    22,
+    19.7, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    5,
+ 
+    'The One with the East German Laundry Detergent',
+    'October 20, 1994',
+    22,
+    18.6, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    6,
+ 
+    'The One with the Butt',
+    'October 27, 1994',
+    22,
+    18.2, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    7,
+ 
+    'The One with the Blackout',
+    'November 3, 1994',
+    22,
+    23.5, 9.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    8,
+ 
+    'The One Where Nana Dies Twice',
+    'November 10, 1994',
+    22,
+    21.1, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    9,
+ 
+    'The One Where Underdog Gets Away',
+    'November 17, 1994',
+    22,
+    23.1, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    10,
+ 
+    'The One with the Monkey',
+    'December 15, 1994',
+    22,
+    19.9, 8.1
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    11,
+ 
+    'The One with Mrs. Bing',
+    'January 5, 1995',
+    22,
+    26.6, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    12,
+ 
+    'The One with the Dozen Lasagnas',
+    'January 12, 1995',
+    22,
+    24.0, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    13,
+ 
+    'The One with the Boobies',
+    'January 19, 1995',
+    22,
+    25.8, 8.7
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    14,
+ 
+    'The One with the Candy Hearts',
+    'February 9, 1995',
+    22,
+    23.8, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    15,
+ 
+    'The One with the Stoned Guy',
+    'February 16, 1995',
+    22,
+    24.8, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    16,
+ 
+    'The One with Two Parts: Part 1',
+    'February 23, 1995',
+    22,
+    26.1, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    17,
+ 
+    'The One with Two Parts: Part 2',
+    'February 23, 1995',
+    22,
+    30.5, 8.5
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    18,
+ 
+    'The One with All the Poker',
+    'March 2, 1995',
+    22,
+    30.4, 8.9
+)
+INSERT INTO Episode VALUES (1,
+    1,
+    19,
+ 
+    'The One Where the Monkey Gets Away',
+    'March 9, 1995',
+    22,
+    29.4, 8.2
+)
+INSERT INTO Episode VALUES (1,
+    1,
+    20,
+ 
+    'The One with the Evil Orthodontist',
+    'April 6, 1995',
+    22,
+    30.0, 8.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    21,
+ 
+    'The One with the Fake Monica',
+    'April 27, 1995',
+    22,
+    28.4, 8.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    22,
+ 
+    'The One with the Ick Factor',
+    'April 27, 1995',
+    22,
+    29.9, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    23,
+ 
+    'The One with the Birth',
+    'May 11, 1995',
+    22,
+    28.7, 8.7
+)
+ 
+INSERT INTO Episode VALUES (1,
+    1,
+    24,
+ 
+    'The One Where Rachel Finds Out',
+    'May 18, 1995',
+    22,
+    31.3, 8.9
+)
+ 
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    1,
+ 
+    'The One with Ross''s New Girlfriend',
+    'Sep 21, 1995',
+    22,
+    32.1, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    2,
+ 
+    'The One with the Breast Milk',
+    'Sep 28, 1995',
+    22,
+    29.8, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    3,
+ 
+    'The One Where Heckles Dies',
+    'Oct 5, 1995',
+    22,
+    30.2, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    4,
+ 
+    'The One with Phoebe''s Husband',
+    'Oct 12, 1995',
+    22,
+    28.1, 8.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    5,
+ 
+    'The One with Five Steaks and an Eggplant',
+    'Oct 12, 1995',
+    22,
+    28.3, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    6,
+ 
+    'The One with the Baby on the Bus',
+    'Oct 19, 1995',
+    22,
+    30.2, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    7,
+ 
+    'The One Where Ross Finds Out',
+    'Nov 9, 1995',
+    22,
+    30.5, 9.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    8,
+ 
+    'The One with the List',
+    'Nov 16, 1995',
+    22,
+    32.9, 8.5
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    9,
+ 
+    'The One with Phoebe''s Dad',
+    'Dec 14, 1995',
+    22,
+    27.8, 8.1
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    10,
+ 
+    'The One with Russ',
+    'Jan 4, 1996',
+    22,
+    32.2, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    11,
+ 
+    'The One with the Lesbian Wedding',
+    'Jan 18, 1996',
+    22,
+    31.6, 8.2
+)
+INSERT INTO Episode VALUES (1,
+    2,
+    12,
+ 
+    'The One After the Superbowl: Part 1',
+    'Jan 28, 1996',
+    22,
+    52.9, 8.7
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    13,
+ 
+    'The One After the Superbowl: Part 2',
+    'Jan 28, 1996',
+    22,
+    52.9, 8.8
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    14,
+ 
+    'The One with the Prom Video',
+    'Feb 1, 1996',
+    22,
+    33.6, 9.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    15,
+ 
+    'The One Where Ross and Rachel... You Know',
+    'Feb 8, 1996',
+    22,
+    32.9, 8.9
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    16,
+ 
+    'The One Where Joey Moves Out',
+    'Feb 15, 1996',
+    22,
+    31.1, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    17,
+ 
+    'The One Where Eddie Moves In',
+    'Feb 22, 1996',
+    22,
+    30.2, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    18,
+ 
+    'The One Where Dr. Ramoray Dies',
+    'Mar 21, 1996',
+    22,
+    30.1, 8.5
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    19,
+ 
+    'The One Where Eddie Won''t Go',
+    'Mar 28, 1996',
+    22,
+    31.2, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    20,
+ 
+    'The One Where Old Yeller Dies',
+    'April 4, 1996',
+    22,
+    27.4, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    21,
+ 
+    'The One with the Bullies',
+    'April 25, 1996',
+    22,
+    24.7, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    22,
+ 
+    'The One with the Two Parties',
+    'May 2, 1996',
+    22,
+    25.5, 9.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    23,
+ 
+    'The One with the Chicken Pox',
+    'May 9, 1996',
+    22,
+    26.1, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    2,
+    24,
+ 
+    'The One with Barry and Mindy''s Wedding',
+    'May 9, 1996',
+    22,
+    29.0, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    1,
+ 
+    'The One with the Princess Leia Fantasy',
+    'Sep 19, 1996',
+    22,
+    26.8, 8.5
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    2,
+ 
+    'The One Where No One''s Ready',
+    'Sep 26, 1996',
+    22,
+    26.7, 9.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    3,
+ 
+    'The One with the Jam',
+    'Oct 3, 1996',
+    22,
+    25.2, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    4,
+ 
+    'The One with the Metaphorical Tunnel',
+    'Oct 10, 1996',
+    22,
+    21.6, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    5,
+ 
+    'The One with Frank Jr.',
+    'Oct 17, 1996',
+    22,
+    23.3, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    6,
+ 
+    'The One with the Flashback',
+    'Oct 31, 1996',
+    22,
+    23.3, 9.1
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    7,
+ 
+    'The One with the Race Car Bed',
+    'Nov 7, 1996',
+    22,
+    27.4, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    8,
+ 
+    'The One with the Giant Poking Device',
+    'Nov 14, 1996',
+    22,
+    28.7, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    9,
+ 
+    'The One with the Football',
+    'Nov 21, 1996',
+    22,
+    29.3, 9.1
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    10,
+ 
+    'The One Where Rachel Quits',
+    'Dec 12, 1996',
+    22,
+    25.1, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    11,
+ 
+    'The One Where Chandler Can''t Remember Which Sister',
+    'Jan 9, 1997',
+    22,
+    29.8, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    12,
+ 
+    'The One with All the Jealousy',
+    'Jan 16, 1997',
+    22,
+    29.6, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    13,
+ 
+    'The One Where Monica and Richard are Just Friends',
+    'Jan 30, 1997',
+    22,
+    28.0, 8.3
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    14,
+ 
+    'The One with Phoebe''s Ex-Partner',
+    'Feb 6, 1997',
+    22,
+    28.9, 8.0
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    15,
+ 
+    'The One Where Ross and Rachel Take a Break',
+    'Feb 13, 1997',
+    22,
+    27.3, 8.6
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    16,
+ 
+    'The One the Morning After',
+    'Feb 20, 1997',
+    22,
+    28.3, 9.1
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    17,
+ 
+    'The One Without the Ski Trip',
+    'Mar 6, 1997',
+    22,
+    25.8, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    18,
+ 
+    'The One with the Hypnosis Tape',
+    'Mar 13, 1997',
+    22,
+    28.1, 8.5
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    19,
+ 
+    'The One with the Tiny T-Shirt',
+    'Mar 27, 1997',
+    22,
+    23.7, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    20,
+ 
+    'The One with the Dollhouse',
+    'Apr 3, 1997',
+    22,
+    24.4, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    21,
+ 
+    'The One with a Chick and a Duck',
+    'Apr 17, 1997',
+    22,
+    23.2, 8.8
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    22,
+ 
+    'The One with the Screamer',
+    'Apr 24, 1997',
+    22,
+    22.6, 8.4
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    23,
+ 
+    'The One with Ross''s Thing',
+    'May 1, 1997',
+    22,
+    24.2, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    24,
+ 
+    'The One with the Ultimate Fighting Champion',
+    'May 8, 1997',
+    22,
+    23.1, 8.2
+)
+ 
+INSERT INTO Episode VALUES (1,
+    3,
+    25,
+ 
+    'The One at the Beach',
+    'May 15, 1997',
+    22,
+    28.8, 8.9
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    1,
+ 
+    'Pilot',
+    'January 9, 2000',
+    26,
+    22.4, 8.4
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    2,
+ 
+    'Red Dress',
+    'January 16, 2000',
+    26,
+    23.3, 8.5
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    3,
+ 
+    'Home Alone 4',
+    'January 23, 2000',
+    26,
+    19.3, 8.0
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    4,
+ 
+    'Shame',
+    'Feb 6, 2000',
+    26,
+    16.8, 7.9
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    5,
+ 
+    'Malcolm Babysits',
+    'Feb 13, 2000',
+    26,
+    17.9, 8.2
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    6,
+ 
+    'Sleepover',
+    'Feb 20, 2000',
+    26,
+    17.1, 8.2
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    7,
+ 
+    'Francis Escapes',
+    'Feb 27, 2000',
+    26,
+    16.6, 7.7
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    8,
+ 
+    'Krelboyne Picnic',
+    'Mar 12, 2000',
+    26,
+    15.5, 8.6
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    9,
+ 
+    'Lois vs. Evil',
+    'Mar 19, 2000',
+    26,
+    16.3, 8.0
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    10,
+ 
+    'Stock Car Races',
+    'Apr 2, 2000',
+    26,
+    14.4, 8.0
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    11,
+ 
+    'Funeral',
+    'Apr 9, 2000',
+    26,
+    15.3, 8.2
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    12,
+ 
+    'Cheerleader',
+    'Apr 16, 2000',
+    26,
+    13.0, 8.2
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    13,
+ 
+    'Rollerskates',
+    'Apr 30, 2000',
+    26,
+    14.5, 8.7
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    14,
+ 
+    'The Bots and the Bees',
+    'May 7, 2000',
+    26,
+    12.3, 8.0
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    15,
+ 
+    'Smunday',
+    'May 14, 2000',
+    26,
+    12.6, 8.1
+)
+ 
+INSERT INTO Episode VALUES (2,
+    1,
+    16,
+ 
+    'Water Park (Part 1)',
+    'May 21, 2000',
+    26,
+    13.9, 8.7
+)
+ 
+INSERT INTO Actor (FirstName, LastName) VALUES ('Jennifer', 'Aniston')
+INSERT INTO ShowStar VALUES (1, @@IDENTITY, 'Rachel Green')
+ 
+INSERT INTO Actor (FirstName, LastName) VALUES ('Courteney', 'Cox')
+INSERT INTO ShowStar VALUES (1, @@IDENTITY, 'Monica Geller')
+ 
+INSERT INTO Actor (FirstName, LastName) VALUES ('Lisa', 'Kudrow')
+INSERT INTO ShowStar VALUES (1, @@IDENTITY, 'Phoebe Buffay')
+ 
+INSERT INTO Actor (FirstName, LastName) VALUES ('Matt', 'LeBlanc')
+INSERT INTO ShowStar VALUES (1, @@IDENTITY, 'Joey Tribbiani')
+ 
+INSERT INTO Actor (FirstName, LastName) VALUES ('Matthew', 'Perry')
+INSERT INTO ShowStar VALUES (1, @@IDENTITY, 'Dr. Ross Geller')
+ 
+INSERT INTO Actor (FirstName, LastName) VALUES ('David', 'Schwimmer')
+INSERT INTO ShowStar VALUES (1, @@IDENTITY, 'Chandler Bing')
+ 
