@@ -108,13 +108,54 @@ select *from Animal
 delete from Animal where zoo='Zoo Miami' and type='zebra'
 
 insert into Employee(name,workplace,takingCareOf)
-values('Jeff Bingam','Zoo Miami','lion')
+values('Jeff Bingam','Zoo Miami',200)
 insert into Employee(name,workplace,takingCareOf)
-values('Mya Stafford','Sunset Zoo','zebra')
+values('Jeff Bingam','Zoo Miami',201)
 insert into Employee(name,workplace,takingCareOf)
-values('Charlie Roberts','Boston Zoo','tiger')
-select *from Employee
+values('John Leyes','Zoo Miami',202)
+
+insert into Employee(name,workplace,takingCareOf)
+values('Mya Stafford','Sunset Zoo',100)
+insert into Employee(name,workplace,takingCareOf)
+values('Mya Stafford','Sunset Zoo',101)
+insert into Employee(name,workplace,takingCareOf)
+values('Jim Sagga','Sunset Zoo',102)
+insert into Employee(name,workplace,takingCareOf)
+values('Jim Sagga','Sunset Zoo',103)
+insert into Employee(name,workplace,takingCareOf)
+values('Jim Sagga','Sunset Zoo',104)
+
+insert into Employee(name,workplace,takingCareOf)
+values('Charlie Roberts','New York Zoo',300)
+insert into Employee(name,workplace,takingCareOf)
+values('Charlie Roberts','New York Zoo',301)
+
+
+insert into Employee(name,workplace,takingCareOf)
+values('Lisa Richards','Chicago Wild Park',400)
+
+
+insert into Employee(name,workplace,takingCareOf)
+values('Greg Johnson','Boston Zoo',500)
+
+
 
 select*from animal a
 join diet d on d.type=a.diet
 where d.type='plants'
+
+--Изведете информация за всички служители, които се грижат за лъвове в зоопарковете.
+select e.id,e.name,e.workplace
+from Employee e
+join animal a on a.id=e.takingCareOf and a.type='lion'
+
+--Изведете всички  животни, които са тревопасни и се намират в зоопарк 'Sunset Zoo'
+select *
+from animal a
+where a.diet='plants' and zoo='Sunset Zoo'
+
+--Изведете всички градове,в които има зоопарк, в който има импала.
+select city
+from building b
+join animal a on a.zoo=b.name
+where a.type='impala'
