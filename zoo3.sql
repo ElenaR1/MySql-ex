@@ -41,15 +41,6 @@ create table WorksIn(
  zoo varchar(20)  REFERENCES Building(name),
 );
 
-drop table  WorksIn
-drop table  Housing
-drop table  TakesCareOf
-drop table  Employee
-drop table  Animal
-drop table  Building
-drop table  Enclosure
-
-
 
 
 
