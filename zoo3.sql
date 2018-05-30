@@ -30,20 +30,20 @@ id int  REFERENCES Animal(id),
 typeOfEnclosure varchar(20) REFERENCES Enclosure(type)
 );
 
-create table takesCareOf(
+create table TakesCareOf(
  name varchar(20) REFERENCES Employee(name),
  animalId int  REFERENCES Animal(id),
 
 );
 
-create table worksIn(
+create table WorksIn(
  name varchar(20) REFERENCES Employee(name),
  zoo varchar(20)  REFERENCES Building(name),
 );
 
-drop table  worksIn
+drop table  WorksIn
 drop table  Housing
-drop table  takesCareOf
+drop table  TakesCareOf
 drop table  Employee
 drop table  Animal
 drop table  Building
@@ -63,7 +63,7 @@ insert into Building(city,name)
 values('Chicago','Chicago Wild Park')
 insert into Building(city,name)
 values('Boston','Boston Zoo')
-select *from building
+
 
 insert into Enclosure(type)
 values('laminated glass')
@@ -71,7 +71,6 @@ insert into Enclosure(type)
 values('nocturnal house')
 insert into Enclosure(type)
 values('wire fence')
-select *from enclosure
 
 
 
@@ -104,7 +103,7 @@ values(103,'tiger','F','Sunset Zoo')
 insert into Animal(id,species,gender,zoo)
 values(104,'impala','M','Sunset Zoo')
  
-select *from Animal
+
 
 
 insert into Employee(name,hireDate)
@@ -121,7 +120,7 @@ insert into Employee(name,hireDate)
 values('Lisa Richards','2015-11-17')
 insert into Employee(name,hireDate)
 values('Greg Johnson','2012-11-17')
-select * from Employee
+
 
 
 
@@ -152,60 +151,54 @@ values(202,'nocturnal house')
 insert into Housing(id,typeOfEnclosure)
 values(301,'nocturnal house')
 
-select * from housing h
-join animal a on a.id=h.id
 
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Maya Stafford',100)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Maya Stafford',101)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Jim Sagga',102)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Jim Sagga',103)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Jim Sagga',104)
 
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Jeff Bingam',200)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Jeff Bingam',201)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('John Leyes',202)
 
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Charlie Roberts',300)
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Charlie Roberts',301)
 
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Lisa Richards',400)
 
-insert into takesCareOf(name,animalId)
+insert into TakesCareOf(name,animalId)
 values('Greg Johnson',500)
 
-select * 
-from takesCareOf t
-join animal a on a.id=t.animalId
 
-insert into worksIn(name,zoo)
+
+insert into WorksIn(name,zoo)
 values('Maya Stafford','Sunset Zoo')
-insert into worksIn(name,zoo)
+insert into WorksIn(name,zoo)
 values('Jim Sagga','Sunset Zoo')
 
-insert into worksIn(name,zoo)
+insert into WorksIn(name,zoo)
 values('Jeff Bingam','Zoo Miami')
-insert into worksIn(name,zoo)
+insert into WorksIn(name,zoo)
 values('John Leyes','Zoo Miami')
 
-insert into worksIn(name,zoo)
+insert into WorksIn(name,zoo)
 values('Charlie Roberts','New York Zoo')
-insert into worksIn(name,zoo)
+insert into WorksIn(name,zoo)
 values('Lisa Richards','Chicago Wild Park')
-insert into worksIn(name,zoo)
+insert into WorksIn(name,zoo)
 values('Greg Johnson','Boston Zoo')
-
-select * from worksIn
 
 
 
@@ -218,7 +211,7 @@ where h.typeOfEnclosure='wire fence'
 
 --Напишете заявка, която извежда имената на всички служители, които се грижат за лъвове в зоопарковете.
 select t.name
-from takesCareOf t
+from TakesCareOf t
 join animal a on a.id=t.animalId
 where a.species='lion'
 
@@ -231,11 +224,12 @@ where a.species='impala'
 
 --Напишете заявка, която извежда всички работници в 'New York Zoo'.
 select *
-from worksIn 
+from WorksIn 
 where zoo='New York Zoo'
 
---Напишете заявка, която извежда всички работници, които работят в Маями .
+--Напишете заявка, която извежда всички работници, които работят в град Маями .
 select *
-from worksIn w
+from WorksIn w
 join building b on b.name=w.zoo
 where city='Miami'
+
