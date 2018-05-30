@@ -4,8 +4,9 @@ USE ZOO
 GO
 
 create table Building(
+id int primary key,
 city varchar(20) ,
-name varchar(20) primary key,
+name varchar(20) unique,
 );
 
 create table Enclosure(
@@ -41,7 +42,7 @@ create table takesCareOf(
 
 create table worksIn(
  employeeId int  REFERENCES Employee(id),
- zoo  varchar(20)  REFERENCES Building(name),
+ zooId int  REFERENCES Building(id),
 );
 
 drop table  worksIn
@@ -56,16 +57,16 @@ drop table  Enclosure
 
 
 
-insert into Building(city,name)
-values('Miami','Sunset Zoo')
-insert into Building(city,name)
-values('New York','New York Zoo')
-insert into Building(city,name)
-values('Miami','Zoo Miami')
-insert into Building(city,name)
-values('Chicago','Chicago Wild Park')
-insert into Building(city,name)
-values('Boston','Boston Zoo')
+insert into Building(id,city,name)
+values(1,'Miami','Sunset Zoo')
+insert into Building(id,city,name)
+values(2,'Miami','Zoo Miami')
+insert into Building(id,city,name)
+values(3,'New York','New York Zoo')
+insert into Building(id,city,name)
+values(4,'Chicago','Chicago Wild Park')
+insert into Building(id,city,name)
+values(5,'Boston','Boston Zoo')
 select *from building
 
 insert into Enclosure(id,type)
@@ -111,13 +112,13 @@ select *from Animal
 
 
 insert into Employee(id,name)
-values(20,'Jeff Bingam')
-insert into Employee(id,name)
-values(21,'John Leyes')
-insert into Employee(id,name)
 values(10,'Maya Stafford')
 insert into Employee(id,name)
 values(11,'Jim Sagga')
+insert into Employee(id,name)
+values(20,'Jeff Bingam')
+insert into Employee(id,name)
+values(21,'John Leyes')
 insert into Employee(id,name)
 values(30,'Charlie Roberts')
 insert into Employee(id,name)
@@ -155,17 +156,6 @@ insert into typeOfAnimal(animalId,enclosure)
 values(301,2)
 
 select * from animal a
-join typeOfAnimal t on t.animalId=a.id
-join enclosure e on t.enclosure=e.id
-where e.type='wire fence'
-
-
-insert into takesCareOf(employeeId,animalId)
-values(20,200)--Jeff takes care of a lion
-insert into takesCareOf(employeeId,animalId)
-values(20,201)--ansd Jeff takews care of a zebra
-insert into takesCareOf(employeeId,animalId)--John leyes takes care of a lizard
-values(21,202)
 
 insert into takesCareOf(employeeId,animalId)
 values(10,100)
@@ -177,6 +167,13 @@ insert into takesCareOf(employeeId,animalId)
 values(11,103)
 insert into takesCareOf(employeeId,animalId)
 values(11,104)
+
+insert into takesCareOf(employeeId,animalId)
+values(20,200)--Jeff takes care of a lion
+insert into takesCareOf(employeeId,animalId)
+values(20,201)--ansd Jeff takews care of a zebra
+insert into takesCareOf(employeeId,animalId)--John leyes takes care of a lizard
+values(21,202)
 
 insert into takesCareOf(employeeId,animalId)
 values(30,300)
@@ -191,9 +188,22 @@ values(50,500)
 
 select * from takesCareOf
 
+insert into worksIn(employeeId,zooId)
+values(10,1)
+insert into worksIn(employeeId,zooId)
+values(11,1)
+insert into worksIn(employeeId,zooId)
+values(20,2)
+insert into worksIn(employeeId,zooId)
+values(21,2)
+insert into worksIn(employeeId,zooId)
+values(30,3)
+insert into worksIn(employeeId,zooId)
+values(40,4)
+insert into worksIn(employeeId,zooId)
+values(50,5)
 
-
-
+select * from worksIn
 
 
 
@@ -205,20 +215,23 @@ join enclosure e on t.enclosure=e.id
 where e.type='wire fence'
 
 
-
-
---Изведете информация за всички служители, които се грижат за лъвове в зоопарковете.
-select e.id,e.name,e.workplace
+--Напишете заявка, която извежда информация за всички служители, които се грижат за лъвове в зоопарковете.
+select e.name,e.id
 from Employee e
-join animal a on a.id=e.takingCareOf and a.type='lion'
+join takesCareOf t on e.id=t.employeeId
+join animal a on a.id=t.animalId
+where a.species='lion'
 
---Изведете всички  животни, които са тревопасни и се намират в зоопарк 'Sunset Zoo'
-select *
-from animal a
-where a.diet='plants' and zoo='Sunset Zoo'
 
---Изведете всички градове,в които има зоопарк, в който има импала.
+--Напишете заявка, която извежда всички градове,в които има зоопарк, в който има импала.
 select city
 from building b
 join animal a on a.zoo=b.name
-where a.type='impala'
+where a.species='impala'
+
+--Напишете заявка, която извежда всички работници в 'New York Zoo'.
+select e.id,e.name
+from employee e
+join worksIn w on e.id=w.employeeId
+join building b on b.id=w.zooId
+where b.name='New York Zoo'
