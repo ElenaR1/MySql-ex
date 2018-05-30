@@ -161,7 +161,35 @@ where e.type='wire fence'
 
 
 insert into takesCareOf(employeeId,animalId)
-values(301,2)
+values(20,200)--Jeff takes care of a lion
+insert into takesCareOf(employeeId,animalId)
+values(20,201)--ansd Jeff takews care of a zebra
+insert into takesCareOf(employeeId,animalId)--John leyes takes care of a lizard
+values(21,202)
+
+insert into takesCareOf(employeeId,animalId)
+values(10,100)
+insert into takesCareOf(employeeId,animalId)
+values(10,101)
+insert into takesCareOf(employeeId,animalId)
+values(11,102)
+insert into takesCareOf(employeeId,animalId)
+values(11,103)
+insert into takesCareOf(employeeId,animalId)
+values(11,104)
+
+insert into takesCareOf(employeeId,animalId)
+values(30,300)
+insert into takesCareOf(employeeId,animalId)
+values(30,301)
+
+insert into takesCareOf(employeeId,animalId)
+values(40,400)
+
+insert into takesCareOf(employeeId,animalId)
+values(50,500)
+
+select * from takesCareOf
 
 
 
@@ -169,11 +197,12 @@ values(301,2)
 
 
 
-
-
-
-
-
+--Напишете заявка, която извежда всички животни, чиято клетка е от тип 'телена ограда'
+select * 
+from animal a
+join typeOfAnimal t on t.animalId=a.id
+join enclosure e on t.enclosure=e.id
+where e.type='wire fence'
 
 
 
